@@ -7,7 +7,7 @@ const app = express();
 const PORT = 5433;
 
 app.use(bodyParser.json());
-//app.use('/users');
+app.use('/users', userRoutes);
 
 syncDatabase().then(() => {
     app.listen(PORT, ()=> {
