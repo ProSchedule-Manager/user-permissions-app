@@ -9,8 +9,20 @@ exports.createUser = async (req, res) => {
       where : { email: req.body.email }
     });
 
+    // Checks if the email is already in use
     if (existingUser) {
-      return res.status(400).json({ message: "Email já se encontra em uso "});
+      return res.status(400).json({ message: "Email already in use"});
+    }
+
+    // Validate required fields
+    if (!req.body.email || !req.body.password || !req.body.permission) {
+      return res.status(400).json({ message: "Missing required fields: email, password, or permission" });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(req.body.email)) {
+      return res.status(400).json({ message: "Invalid email format" });
     }
 
     const submitedUser = await database.User.create({
