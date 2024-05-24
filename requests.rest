@@ -1,0 +1,16 @@
+### Get user by id
+
+GET http://localhost:5433/users/3 HTTP/1.1
+
+### Create new user
+
+POST http://localhost:5433/users HTTP/1.1
+content-type: application/json
+
+{
+    "email": "rianrbps@gmail.com",
+    "password": "senha123",
+    "permission": "superadmin"
+}
+
+
