@@ -15,3 +15,7 @@ or
 ```
 npm run dev
 ```
+
+# install REST CLIENT vscode extension
+
+run requests on `requests.rest`
