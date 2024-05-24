@@ -1,0 +1,25 @@
+{
+    "editor.tabSize": 2,                  // Set the number of spaces per tab
+    "editor.insertSpaces": true,          // Use spaces instead of tabs
+    "editor.formatOnSave": true,          // Format the file on save
+    "files.eol": "\n",                     // Use LF (Unix) line endings
+    "files.trimTrailingWhitespace": true,  // Remove trailing whitespace on save
+    "files.insertFinalNewline": true,      // Insert a final newline at the end of files
+    "eslint.enable": true,                // Enable ESLint
+    "prettier.requireConfig": true,        // Require a prettier configuration file
+    "prettier.trailingComma": "es5",      // Configure Prettier trailing commas
+    "prettier.singleQuote": true,         // Use single quotes in Prettier
+    "prettier.semi": false,               // Do not use semicolons in Prettier
+    "files.exclude": {
+        "**/.git": true,                  // Exclude .git folder
+        "**/.DS_Store": true,             // Exclude .DS_Store files (macOS)
+        "**/node_modules": true           // Exclude node_modules folder
+    },
+    "search.exclude": {
+        "**/node_modules": true,          // Exclude node_modules folder from search
+        "**/bower_components": true       // Exclude bower_components folder from search
+    },
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    }
+}
