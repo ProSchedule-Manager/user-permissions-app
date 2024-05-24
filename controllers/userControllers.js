@@ -1,7 +1,21 @@
 const database = require('../models/User');
 
+exports.readUser = async (req, res) => {
+    try {
+        console.log("Read user");
+        const requestedUser = await database.User.findOne({ 
+            where: { id: req.params.id } 
+        });
+        res.status(200).send(requestedUser);
+    } catch(error) {
+        console.log("Error", error);
+        res.status(500);
+    }
+}
+
 exports.createUser = async (req, res) => {
 
+    console.log("Create user")
     // database.User.create({
     //     email: req.body.email,
     //     password: req.body.password,
@@ -15,14 +29,10 @@ exports.createUser = async (req, res) => {
         permission: req.body.permission,
     });
     res.send(submitedUser)
+    
 }
 
-exports.readUser = async (req, res) => {
-    const requestedUser = await database.User.findAll({ 
-        where: { id: req.params.id } 
-    });
-    res.send(requestedUser)
-}
+
 
 exports.updateUser = async (req, res) => {
     const { email, password, permission } = req.body;
