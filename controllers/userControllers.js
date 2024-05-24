@@ -1,13 +1,30 @@
 const database = require("../models/User");
 
 exports.createUser = async (req, res) => {
-  console.log("Create user");
-  const submitedUser = await database.User.create({
-    email: req.body.email,
-    password: req.body.password,
-    permission: req.body.permission,
-  });
-  res.send(submitedUser);
+  try {
+    console.log("Create user");
+
+    // Verificando se o email já está vinculado a um usuário
+    const existingUser = await database.User.findOne({
+      where : { email: req.body.email }
+    });
+
+    if (existingUser) {
+      return res.status(400).json({ message: "Email já se encontra em uso "});
+    }
+
+    const submitedUser = await database.User.create({
+      email: req.body.email,
+      password: req.body.password,
+      permission: req.body.permission,
+    });
+
+    res.send(submitedUser);
+
+  } catch (err) {
+    console.error(error);
+    res.status(500).json({ message: error.message })
+  }
 };
 
 exports.readUser = async (req, res) => {
