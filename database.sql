@@ -45,6 +45,17 @@ CREATE TABLE tenant_client_locations (
     FOREIGN KEY (client_user_id) REFERENCES users(id)
 );
 
+CREATE TABLE recurrence_patterns (
+    id SERIAL PRIMARY KEY,
+    tenant_app_id INT NOT NULL,
+    pattern_type VARCHAR(50) NOT NULL CHECK (pattern_type IN ('DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY')),
+    interval INT NOT NULL,  -- e.g., every 2 days/weeks/months/years
+    day_of_week INT,  -- applicable for weekly pattern (0 = Sunday, 6 = Saturday)
+    day_of_month INT,  -- applicable for monthly pattern (1-31)
+    month_of_year INT,  -- applicable for yearly pattern (1-12)
+    FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id)
+);
+
 CREATE TABLE tenant_jobs (
     id SERIAL PRIMARY KEY,
     tenant_app_id INT NOT NULL,
@@ -52,8 +63,10 @@ CREATE TABLE tenant_jobs (
     start_date_time TIMESTAMP NOT NULL,
     end_date_time TIMESTAMP NOT NULL,
     status VARCHAR(50) NOT NULL CHECK (status IN ('QUOTE', 'BOOKED', 'ONGOING', 'COMPLETED')),
+    recurrence_pattern_id INT,
     FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id),
-    FOREIGN KEY (tenant_client_location_id) REFERENCES tenant_client_locations(id)
+    FOREIGN KEY (tenant_client_location_id) REFERENCES tenant_client_locations(id),
+    FOREIGN KEY (recurrence_pattern_id) REFERENCES recurrence_patterns(id)
 );
 
 CREATE TABLE notes (
@@ -115,8 +128,9 @@ CREATE TABLE client_users (
     user_id INT NOT NULL,
     tenant_app_id INT NOT NULL,
     PRIMARY KEY (user_id, tenant_app_id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id)
 );
-
 
 CREATE TABLE super_admin_users (
     user_id INT NOT NULL,
