@@ -25,17 +25,22 @@ exports.createUser = async (req, res) => {
       return res.status(400).json({ message: "Invalid email format" });
     }
 
+    // Create the new user
     const submitedUser = await database.User.create({
       email: req.body.email,
       password: req.body.password,
       permission: req.body.permission,
     });
 
+    res.status(201).json(newUser);
+    
     res.send(submitedUser);
 
+    console.error("Error creating user:", error);
+    
   } catch (err) {
     console.error(error);
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
