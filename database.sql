@@ -1,14 +1,3 @@
--- https://sqlflow.gudusoft.com/#/
-
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    user_type VARCHAR(50) NOT NULL,
-    profile_id INT,
-    FOREIGN KEY (profile_id) REFERENCES profiles(id)
-);
-
 CREATE TABLE profiles (
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
@@ -19,12 +8,31 @@ CREATE TABLE profiles (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE authentication_providers (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE user_authentication (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE,
+    password VARCHAR(255),
+    profile_id INT NOT NULL,
+    provider_id INT,
+    provider_user_id VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (profile_id) REFERENCES profiles(id),
+    FOREIGN KEY (provider_id) REFERENCES authentication_providers(id),
+    UNIQUE (provider_id, provider_user_id)
+);
+
 CREATE TABLE tenant_apps (
     id SERIAL PRIMARY KEY,
     tenant_user_id INT NOT NULL,
     is_enabled BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (tenant_user_id) REFERENCES tenant_users(id)
+    FOREIGN KEY (tenant_user_id) REFERENCES profiles(id)
 );
 
 CREATE TABLE subscriptions (
@@ -36,45 +44,53 @@ CREATE TABLE subscriptions (
     FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id)
 );
 
-CREATE TABLE tenant_client_locations (
+CREATE TABLE places (
     id SERIAL PRIMARY KEY,
     tenant_app_id INT NOT NULL,
-    client_user_id INT NOT NULL,
+    client_user_id INT,
     address TEXT NOT NULL,
     FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id),
-    FOREIGN KEY (client_user_id) REFERENCES users(id)
+    FOREIGN KEY (client_user_id) REFERENCES profiles(id)
 );
 
 CREATE TABLE recurrence_patterns (
     id SERIAL PRIMARY KEY,
     tenant_app_id INT NOT NULL,
     pattern_type VARCHAR(50) NOT NULL CHECK (pattern_type IN ('DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY')),
-    interval INT NOT NULL,  -- e.g., every 2 days/weeks/months/years
-    day_of_week INT,  -- applicable for weekly pattern (0 = Sunday, 6 = Saturday)
-    day_of_month INT,  -- applicable for monthly pattern (1-31)
-    month_of_year INT,  -- applicable for yearly pattern (1-12)
+    interval INT NOT NULL,
+    day_of_week INT,
+    day_of_month INT,
+    month_of_year INT,
     FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id)
 );
 
-CREATE TABLE tenant_jobs (
+CREATE TABLE jobs (
     id SERIAL PRIMARY KEY,
     tenant_app_id INT NOT NULL,
-    tenant_client_location_id INT NOT NULL,
+    place_id INT NOT NULL,
     start_date_time TIMESTAMP NOT NULL,
     end_date_time TIMESTAMP NOT NULL,
     status VARCHAR(50) NOT NULL CHECK (status IN ('QUOTE', 'BOOKED', 'ONGOING', 'COMPLETED')),
     recurrence_pattern_id INT,
     FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id),
-    FOREIGN KEY (tenant_client_location_id) REFERENCES tenant_client_locations(id),
+    FOREIGN KEY (place_id) REFERENCES places(id),
     FOREIGN KEY (recurrence_pattern_id) REFERENCES recurrence_patterns(id)
+);
+
+CREATE TABLE job_logs (
+    id SERIAL PRIMARY KEY,
+    job_id INT NOT NULL,
+    log JSONB NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (job_id) REFERENCES jobs(id)
 );
 
 CREATE TABLE notes (
     id SERIAL PRIMARY KEY,
-    tenant_job_id INT NOT NULL,
+    job_id INT NOT NULL,
     note_text TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (tenant_job_id) REFERENCES tenant_jobs(id)
+    FOREIGN KEY (job_id) REFERENCES jobs(id)
 );
 
 CREATE TABLE tasks (
@@ -85,55 +101,48 @@ CREATE TABLE tasks (
     description TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    metadata JSONB,
     FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id),
-    FOREIGN KEY (assigned_user_id) REFERENCES users(id),
-    FOREIGN KEY (author_user_id) REFERENCES users(id)
-);
-
-CREATE TABLE jobs_locations (
-    job_id INT NOT NULL,
-    tenant_client_location_id INT NOT NULL,
-    PRIMARY KEY (job_id, tenant_client_location_id),
-    FOREIGN KEY (job_id) REFERENCES tenant_jobs(id),
-    FOREIGN KEY (tenant_client_location_id) REFERENCES tenant_client_locations(id)
+    FOREIGN KEY (assigned_user_id) REFERENCES profiles(id),
+    FOREIGN KEY (author_user_id) REFERENCES profiles(id)
 );
 
 -- Additional tables for user roles in tenant_app
 
 CREATE TABLE tenant_users (
-    user_id INT NOT NULL,
+    id SERIAL PRIMARY KEY,
+    profile_id INT NOT NULL,
     tenant_app_id INT NOT NULL,
-    PRIMARY KEY (user_id, tenant_app_id),
-    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (profile_id) REFERENCES profiles(id),
     FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id)
 );
 
 CREATE TABLE admin_users (
-    user_id INT NOT NULL,
+    id SERIAL PRIMARY KEY,
+    profile_id INT NOT NULL,
     tenant_app_id INT NOT NULL,
-    PRIMARY KEY (user_id, tenant_app_id),
-    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (profile_id) REFERENCES profiles(id),
     FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id)
 );
 
-CREATE TABLE team_member_users (
-    user_id INT NOT NULL,
+CREATE TABLE staff_users (
+    id SERIAL PRIMARY KEY,
+    profile_id INT NOT NULL,
     tenant_app_id INT NOT NULL,
-    PRIMARY KEY (user_id, tenant_app_id),
-    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (profile_id) REFERENCES profiles(id),
     FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id)
 );
 
 CREATE TABLE client_users (
-    user_id INT NOT NULL,
+    id SERIAL PRIMARY KEY,
+    profile_id INT NOT NULL,
     tenant_app_id INT NOT NULL,
-    PRIMARY KEY (user_id, tenant_app_id),
-    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (profile_id) REFERENCES profiles(id),
     FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id)
 );
 
 CREATE TABLE super_admin_users (
-    user_id INT NOT NULL,
-    PRIMARY KEY (user_id),
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    id SERIAL PRIMARY KEY,
+    profile_id INT NOT NULL,
+    FOREIGN KEY (profile_id) REFERENCES profiles(id)
 );

@@ -19,3 +19,7 @@ npm run dev
 # install REST CLIENT vscode extension
 
 run requests on `requests.rest`
+
+
+# visualize ERD from .sql
+https://sqlflow.gudusoft.com/#/
