@@ -26,15 +26,13 @@ exports.createUser = async (req, res) => {
     }
 
     // Create the new user
-    const submitedUser = await database.User.create({
+    const newUser = await database.User.create({
       email: req.body.email,
       password: req.body.password,
       permission: req.body.permission,
     });
 
     res.status(201).json(newUser);
-    
-    res.send(submitedUser);
 
     console.error("Error creating user:", error);
     
