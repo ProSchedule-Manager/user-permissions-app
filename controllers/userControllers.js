@@ -33,11 +33,9 @@ exports.createUser = async (req, res) => {
     });
 
     res.status(201).json(newUser);
-
-    console.error("Error creating user:", error);
     
   } catch (err) {
-    console.error(error);
+    console.error("Error creating user:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
