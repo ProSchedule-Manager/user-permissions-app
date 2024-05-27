@@ -1,3 +1,4 @@
+-- Profiles Table
 CREATE TABLE profiles (
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
@@ -8,12 +9,14 @@ CREATE TABLE profiles (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Authentication Providers Table
 CREATE TABLE authentication_providers (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- User Authentication Table
 CREATE TABLE user_authentication (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE,
@@ -27,6 +30,7 @@ CREATE TABLE user_authentication (
     UNIQUE (provider_id, provider_user_id)
 );
 
+-- Tenant Apps Table
 CREATE TABLE tenant_apps (
     id SERIAL PRIMARY KEY,
     tenant_user_id INT NOT NULL,
@@ -35,6 +39,7 @@ CREATE TABLE tenant_apps (
     FOREIGN KEY (tenant_user_id) REFERENCES profiles(id)
 );
 
+-- Subscriptions Table
 CREATE TABLE subscriptions (
     id SERIAL PRIMARY KEY,
     tenant_app_id INT NOT NULL,
@@ -44,6 +49,34 @@ CREATE TABLE subscriptions (
     FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id)
 );
 
+-- Subscription Payments Table
+CREATE TABLE subscription_payments (
+    id SERIAL PRIMARY KEY,
+    subscription_id INT NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    payment_method VARCHAR(50) NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    transaction_id VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (subscription_id) REFERENCES subscriptions(id)
+);
+
+-- Subscription Invoices Table
+CREATE TABLE subscription_invoices (
+    id SERIAL PRIMARY KEY,
+    subscription_id INT NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    invoice_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    due_date DATE NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (subscription_id) REFERENCES subscriptions(id)
+);
+
+-- Places Table
 CREATE TABLE places (
     id SERIAL PRIMARY KEY,
     tenant_app_id INT NOT NULL,
@@ -53,6 +86,7 @@ CREATE TABLE places (
     FOREIGN KEY (client_user_id) REFERENCES profiles(id)
 );
 
+-- Recurrence Patterns Table
 CREATE TABLE recurrence_patterns (
     id SERIAL PRIMARY KEY,
     tenant_app_id INT NOT NULL,
@@ -64,6 +98,7 @@ CREATE TABLE recurrence_patterns (
     FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id)
 );
 
+-- Jobs Table
 CREATE TABLE jobs (
     id SERIAL PRIMARY KEY,
     tenant_app_id INT NOT NULL,
@@ -72,19 +107,42 @@ CREATE TABLE jobs (
     end_date_time TIMESTAMP NOT NULL,
     status VARCHAR(50) NOT NULL CHECK (status IN ('QUOTE', 'BOOKED', 'ONGOING', 'COMPLETED')),
     recurrence_pattern_id INT,
+    log JSONB DEFAULT '[]',
     FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id),
     FOREIGN KEY (place_id) REFERENCES places(id),
     FOREIGN KEY (recurrence_pattern_id) REFERENCES recurrence_patterns(id)
 );
 
-CREATE TABLE job_logs (
+-- Job Payments Table
+CREATE TABLE job_payments (
     id SERIAL PRIMARY KEY,
     job_id INT NOT NULL,
-    log JSONB NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    fee DECIMAL(10, 2),
+    net_amount DECIMAL(10, 2),
+    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    payment_method VARCHAR(50) NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    transaction_id VARCHAR(100) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (job_id) REFERENCES jobs(id)
 );
 
+-- Job Invoices Table
+CREATE TABLE job_invoices (
+    id SERIAL PRIMARY KEY,
+    job_id INT NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    invoice_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    due_date DATE NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (job_id) REFERENCES jobs(id)
+);
+
+-- Notes Table
 CREATE TABLE notes (
     id SERIAL PRIMARY KEY,
     job_id INT NOT NULL,
@@ -93,6 +151,7 @@ CREATE TABLE notes (
     FOREIGN KEY (job_id) REFERENCES jobs(id)
 );
 
+-- Tasks Table
 CREATE TABLE tasks (
     id SERIAL PRIMARY KEY,
     tenant_app_id INT NOT NULL,
@@ -107,8 +166,7 @@ CREATE TABLE tasks (
     FOREIGN KEY (author_user_id) REFERENCES profiles(id)
 );
 
--- Additional tables for user roles in tenant_app
-
+-- Tenant Users Table
 CREATE TABLE tenant_users (
     id SERIAL PRIMARY KEY,
     profile_id INT NOT NULL,
@@ -117,6 +175,7 @@ CREATE TABLE tenant_users (
     FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id)
 );
 
+-- Admin Users Table
 CREATE TABLE admin_users (
     id SERIAL PRIMARY KEY,
     profile_id INT NOT NULL,
@@ -125,6 +184,7 @@ CREATE TABLE admin_users (
     FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id)
 );
 
+-- Staff Users Table
 CREATE TABLE staff_users (
     id SERIAL PRIMARY KEY,
     profile_id INT NOT NULL,
@@ -133,6 +193,7 @@ CREATE TABLE staff_users (
     FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id)
 );
 
+-- Client Users Table
 CREATE TABLE client_users (
     id SERIAL PRIMARY KEY,
     profile_id INT NOT NULL,
@@ -141,6 +202,7 @@ CREATE TABLE client_users (
     FOREIGN KEY (tenant_app_id) REFERENCES tenant_apps(id)
 );
 
+-- Super Admin Users Table
 CREATE TABLE super_admin_users (
     id SERIAL PRIMARY KEY,
     profile_id INT NOT NULL,
