@@ -1,14 +1,5 @@
 # ProSchedule Manager
 
-## Requirements
-
-1. Select a subscription plan in the plans page - http://ProScheduleManager.placeholder/plans
-2. Complete the purchase in checkout page - http://ProScheduleManager.placeholder/checkout
-3. Click on the link on the email to go the email confirmation page and enable the account - http://ProScheduleManager.placeholder/confirm-email
-4. Login to the account panel - http://ProScheduleManager.placeholder/login
-5. Go to account - http://ProScheduleManager.placeholder/account
-6. Follow the link to 
-
 ## Summary
 
 ProSchedule Manager is an online cloud based application for business to manage clients, quotes, invoices, schedule, booking, workforce, dispatching, communication, payments, and payroll. 
@@ -70,21 +61,28 @@ The proposed initial stack includes:
 - React
 - Nginx
 
+## Portals
 
-## URLs
+## ProSchedule Manager Website
 
-1. Public
+* Public
     * http://ProScheduleManager.placeholder
     * http://ProScheduleManager.placeholder/plans
     * http://ProScheduleManager.placeholder/checkout
     * http://ProScheduleManager.placeholder/login
-2. Authenticated
+
+## ProSchedule Manager Website - Tenant Portal
+
+* Authenticated
     * http://ProScheduleManager.placeholder/account
     * http://ProScheduleManager.placeholder/subscription
     * http://ProScheduleManager.placeholder/payment
     * http://ProScheduleManager.placeholder/profile
 
-
+## Business Website
+## Business Website - Admin Portal
+## Business Website - Staff Portal
+## Business Website - Client Portal
 
 ## User Stories
 
@@ -93,18 +91,6 @@ The proposed initial stack includes:
 - A guest user should be able to view the subscriptions plans on the ProScheduleManager Website.
 - A guest user should be able to purchase a subscription plan.
 - A guest user should be able to send ProScheduleManager emails.
-
-### Super Admin
-
-- A super admin should be able to view the subscriptions table.
-- A super admin should be able to filter the subscriptions table by active/expired.
-- A super admin should be able to search the subscriptions table by business name, domain name, owner first and last name, and owner email.
-- A super admin should be able to sort the subscriptions table by any of the table’s columns.
-- A super admin should be able to view payments table.
-- A super admin should be able to view payment details.
-- A super admin should be able to view owner tickets table.
-- A super admin should be able to view owner ticket details.
-- A super admin should be able to reply to owner tickets.
 
 ### Tenant User
 
@@ -135,7 +121,7 @@ The proposed initial stack includes:
 - A tenant should be able to edit the white-label website about us content in the tenant portal.
 - A tenant should be able to edit the white-label website contact content in the tenant portal.
 
-### Admin
+### Admin User
 
 - An admin should be able to log in to the white-label website to the tenant portal.
 - An admin should be able to create staff users.
@@ -183,7 +169,7 @@ The proposed initial stack includes:
 - An admin should be able to view leads.
 - An admin should be able to view job requests.
 
-### Staff
+### Staff User
 
 - Staff should be able to log in to the white-label website to the staff portal.
 - Staff should be able to check in to a job.
@@ -200,7 +186,7 @@ The proposed initial stack includes:
 - Staff should be able to edit profile information.
 - Staff should be able to edit tax information.
 
-### Client
+### Client User
 
 - A client should be able to log in to the client portal via the tenant website.
 - A client should be able to update his/hers profile information.
@@ -221,6 +207,18 @@ The proposed initial stack includes:
 - A client should be able to send messages visible only to admin users.
 - A client should be able to request a quote for a job.
 - A client should be able to request job cancellation.
+
+### Super Admin
+
+- A super admin should be able to view the subscriptions table.
+- A super admin should be able to filter the subscriptions table by active/expired.
+- A super admin should be able to search the subscriptions table by business name, domain name, owner first and last name, and owner email.
+- A super admin should be able to sort the subscriptions table by any of the table’s columns.
+- A super admin should be able to view payments table.
+- A super admin should be able to view payment details.
+- A super admin should be able to view owner tickets table.
+- A super admin should be able to view owner ticket details.
+- A super admin should be able to reply to owner tickets.
 
 
 ## Features
@@ -256,6 +254,25 @@ The proposed initial stack includes:
 
 
 ## Flows
+
+url: http://ProScheduleManager.placeholder - psm.com
+
+1. Sign up
+    1. Select a subscription plan in the plans page - psm.com/plans
+    2. Complete the purchase in checkout page - psm.com/checkout
+    3. Click on the link on the email. That should take the user to the email confirmation page and enable the "tenant user account" - psm.com/confirm-email
+    4. Login to the account panel - psm.com/login
+
+2. Tenant Portal
+    1. Go to "Account" - psm.com/account
+    2. Setup Business information - psm.com/account/business
+    3. Setup User Profile information - psm.com/account/profile
+
+3. Admin Portal
+
+4. Staff Portal
+
+5. Client Portal
 
 - Guest purchase a subscription.
 - Tenant user setup website.
