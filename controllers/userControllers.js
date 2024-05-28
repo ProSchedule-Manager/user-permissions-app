@@ -1,13 +1,43 @@
 const database = require("../models/User");
 
 exports.createUser = async (req, res) => {
-  console.log("Create user");
-  const submitedUser = await database.User.create({
-    email: req.body.email,
-    password: req.body.password,
-    permission: req.body.permission,
-  });
-  res.send(submitedUser);
+  try {
+    console.log("Create user");
+
+    // Verificando se o email já está vinculado a um usuário
+    const existingUser = await database.User.findOne({
+      where : { email: req.body.email }
+    });
+
+    // Checks if the email is already in use
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already in use"});
+    }
+
+    // Validate required fields
+    if (!req.body.email || !req.body.password || !req.body.permission) {
+      return res.status(400).json({ message: "Missing required fields: email, password, or permission" });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(req.body.email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+
+    // Create the new user
+    const newUser = await database.User.create({
+      email: req.body.email,
+      password: req.body.password,
+      permission: req.body.permission,
+    });
+
+    res.status(201).json(newUser);
+    
+  } catch (err) {
+    console.error("Error creating user:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 exports.readUser = async (req, res) => {
