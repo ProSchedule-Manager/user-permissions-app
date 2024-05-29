@@ -34,7 +34,7 @@ exports.createUser = async (req, res) => {
 
     res.status(201).json(newUser);
     
-  } catch (err) {
+  } catch (error) {
     console.error("Error creating user:", error);
     res.status(500).json({ message: "Internal server error" });
   }
@@ -53,7 +53,7 @@ exports.readUser = async (req, res) => {
     }
 
     res.json(user);
-  } catch (err) {
+  } catch (error) {
     res.status(500).json({ message: err.message });
   }
 };

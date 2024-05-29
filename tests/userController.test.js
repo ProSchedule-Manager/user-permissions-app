@@ -1,4 +1,6 @@
 // userController.test.js
+// jest for tests
+// sinon for mocking & spying
 
 const { createUser } = require('../controllers/userControllers');
 const database = require("../models/User");
@@ -70,4 +72,14 @@ describe('createUser', () => {
         sinon.assert.calledWith(res.json, { message: "Invalid email format" });
     });
 
+    
+    it('should return 500 if there is an internal server error', async () => {
+        sandbox.stub(database.User, 'findOne').throws(new Error('Internal server error'));
+
+        await createUser(req, res);
+
+        sinon.assert.calledWith(res.status, 500);
+        sinon.assert.calledWith(res.json, { message: "Internal server error" });
+    });
+    
 });
