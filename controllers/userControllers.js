@@ -54,7 +54,7 @@ exports.readUser = async (req, res) => {
 
     res.json(user);
   } catch (error) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
