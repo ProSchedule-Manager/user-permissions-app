@@ -58,18 +58,21 @@ exports.readUser = async (req, res) => {
   }
 };
 
-exports.updateUser = async (req, res) => {
-  const { email, password, permission } = req.body;
-  const updatedUser = await database.User.update(
-    {
-      ...(email && { email }),
-      ...(password && { password }),
-      ...(permission && { permission }),
-    },
-    { where: { id } }
-  );
-  res.send("Dados de usuário atualizados");
-};
+app.put('/users/:id', async (req, res) => {
+  try {
+    const [updated] = await User.update(req.body, {
+      where: { id: req.params.id }
+    });
+    if (updated) {
+      const updatedUser = await User.findByPk(req.params.id);
+      res.json(updatedUser);
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
 
 exports.deleteUser = (req, res) => {
   const deletedUser = database.User.destroy({

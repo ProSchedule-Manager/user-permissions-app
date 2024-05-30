@@ -1,6 +1,23 @@
 const { createUser } = require('../controllers/userControllers');
 const database = require("../models/User");
 
+jest.mock('../models/User');
+
+describe('user controller', () => {
+    let req, res;
+
+    beforeEach(() => {
+        req = {
+            body: {},
+            param: {},
+        };
+        res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn().mockReturnThis(),
+        };
+    });
+});
+
 describe('creates a new user', () => {
     let req, res;
 
@@ -60,13 +77,17 @@ describe('creates a new user', () => {
     });
 
     it('handles email already in use', async () => {
-        jest.spyOn(database.User, 'findOne').mockResolvedValue({ id: 1, email: 'test@example.com' });
-
+        req.body.email = 'test@example.com';
+        req.body.password = 'password123';
+        req.body.permission = 'user';
+  
+        database.User.findOne.mockResolvedValue(true);
+  
         await createUser(req, res);
-
+  
         expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.json).toHaveBeenCalledWith({ message: "Email already in use" });
-    });
+        expect(res.json).toHaveBeenCalledWith({ message: 'Email already in use' });
+      });
 
     it('handles database error', async () => {
         jest.spyOn(database.User, 'findOne').mockImplementation(() => { throw new Error('Internal server error') });

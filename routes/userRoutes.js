@@ -10,7 +10,7 @@ const {
 router
   .post("/", createUser)
   .get("/:id", readUser)
-  .put("/", updateUser)
+  .put("/:id", updateUser)
   .delete("/:id", deleteUser);
 
 module.exports = router;
