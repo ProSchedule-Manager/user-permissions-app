@@ -40,16 +40,6 @@ describe('user controller', () => {
             expect(res.json).toHaveBeenCalledWith(mockUser);
         });
 
-        // For some reason this test is only passed if it's called before the 'handles email already in use' test
-        it('handles missing required fields', async () => {
-            req.body = { email: 'test@example.com' }; // Missing password and permission
-
-            await createUser(req, res);
-
-            expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({ message: "Missing required fields: email, password, or permission" });
-        });
-
         // This one was the same problem related to being called before 'handles email already in use'
         it('handles invalid email format', async () => {
             req.body.email = '/^[^\s@]+@[^\s@]+\.[^\s@]+$/@gmail.com';
@@ -58,6 +48,16 @@ describe('user controller', () => {
 
             expect(res.status).toHaveBeenCalledWith(400);
             expect(res.json).toHaveBeenCalledWith({ message: "Invalid email format" });
+        });
+
+        // For some reason this test is only passed if it's called before the 'handles email already in use' test
+        it('handles missing required fields', async () => {
+            req.body = { email: 'test@example.com' }; // Missing password and permission
+
+            await createUser(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({ message: "Missing required fields: email, password, or permission" });
         });
 
         it('handles email already in use', async () => {
