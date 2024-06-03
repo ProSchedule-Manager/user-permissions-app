@@ -50,6 +50,8 @@ describe("user controller", () => {
     // This one was the same problem related to being called before 'handles email already in use'
     it("handles invalid email format", async () => {
       req.body.email = "/^[^s@]+@[^s@]+.[^s@]+$/@gmail.com";
+      req.body.password = "password";
+      req.body.permission = "tenant user";
 
       await createUser(req, res);
 
