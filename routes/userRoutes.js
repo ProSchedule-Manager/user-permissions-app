@@ -9,7 +9,7 @@ const {
 
 router
   .post("/", createUser)
-  .get("/:id", readUser)
+  .get("/api/v1/user/:id", readUser)
   .put("/", updateUser)
   .delete("/:id", deleteUser);
 
