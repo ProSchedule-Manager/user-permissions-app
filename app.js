@@ -1,13 +1,13 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const { syncDatabase } = require("./models");
-const userRoutes = require("./routes/userRoutes");
+const routes = require("./routes");
 
 const app = express();
 const PORT = 5433;
 
 app.use(bodyParser.json());
-app.use("/users", userRoutes);
+app.use("/api", routes);
 
 syncDatabase().then(() => {
   app.listen(PORT, () => {
