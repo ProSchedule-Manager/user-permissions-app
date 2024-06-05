@@ -18,7 +18,7 @@ describe("user controller", () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   describe("creates a new user", () => {
@@ -47,7 +47,6 @@ describe("user controller", () => {
       expect(res.json).toHaveBeenCalledWith(mockUser);
     });
 
-    // This one was the same problem related to being called before 'handles email already in use'
     it("handles invalid email format", async () => {
       req.body.email = "/^[^s@]+@[^s@]+.[^s@]+$/@gmail.com";
       req.body.password = "password";
@@ -61,7 +60,7 @@ describe("user controller", () => {
       });
     });
 
-    // For some reason this test is only passed if it's called before the 'handles email already in use' test
+    
     it("handles missing required fields", async () => {
       req.body = { email: "test@example.com" }; // Missing password and permission
 
