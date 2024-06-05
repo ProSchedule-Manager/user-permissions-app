@@ -90,7 +90,7 @@ describe("user controller", () => {
 
     it("handles database error", async () => {
       jest.spyOn(database.User, "findOne").mockImplementation(() => {
-        throw new Error("Internal server error");
+        throw new Error();
       });
 
       await createUser(req, res);
