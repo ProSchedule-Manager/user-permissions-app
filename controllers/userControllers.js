@@ -34,7 +34,7 @@ exports.createUser = async (req, res) => {
 
     res.status(201).json(newUser);
     
-  } catch (err) {
+  } catch (error) {
     console.error("Error creating user:", error);
     res.status(500).json({ message: "Internal server error" });
   }
@@ -68,12 +68,12 @@ exports.updateUser = async (req, res) => {
     },
     { where: { id } }
   );
-  res.send("Dados de usuário atualizados");
+  res.send("User data updated");
 };
 
 exports.deleteUser = (req, res) => {
   const deletedUser = database.User.destroy({
     where: { id: req.params.id },
   });
-  res.send("Usuário deletado com sucesso");
+  res.send("User deleted with success");
 };
