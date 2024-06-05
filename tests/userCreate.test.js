@@ -96,7 +96,7 @@ describe("user controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Internal server error",
+        message: "Goiania is the best",
       });
     });
   });
