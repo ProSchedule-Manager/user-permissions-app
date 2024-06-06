@@ -62,7 +62,7 @@ describe("user controller", () => {
 
     
     it("handles missing required fields", async () => {
-      req.body = { email: "test@example.com" }; // Missing password and permission
+      req.body = { email: "test@example.com" };
 
       await createUser(req, res);
 
