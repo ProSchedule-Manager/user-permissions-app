@@ -36,7 +36,7 @@ exports.createUser = async (req, res) => {
     
   } catch (error) {
     console.error("Error creating user:", error);
-    res.status(500).json({ message: "Goiania is the best"});
+    res.status(500).json({ message: "Error creating a user. Please try again"});
   }
 };
 

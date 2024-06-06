@@ -96,7 +96,7 @@ describe("user controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Goiania is the best",
+        message: "Error creating a user. Please try again",
       });
     });
   });
