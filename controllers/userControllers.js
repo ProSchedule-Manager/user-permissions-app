@@ -36,7 +36,7 @@ exports.createUser = async (req, res) => {
     
   } catch (error) {
     console.error("Error creating user:", error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "Error creating a user. Please try again"});
   }
 };
 
@@ -58,3 +58,29 @@ exports.readUser = async (req, res) => {
   }
 };
 
+exports.updateUser = async (req, res) => {
+
+  const { id, email, password, permission } = req.body;
+
+  try {
+    const updatedUser = await database.User.update(
+      {
+        ...(email && { email }),
+        ...(password && { password }),
+        ...(permission && { permission }),
+      },
+      { where: { id } }
+    );
+
+    if (updatedUser === 0) {
+      return res.status(404).send("User not found");
+    }
+
+    res.status(200).send("User data updated");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while updating user data");
+  }
+};
+
+exports.deleteUser = (req, res) => {};
