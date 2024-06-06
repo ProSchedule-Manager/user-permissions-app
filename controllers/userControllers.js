@@ -34,9 +34,8 @@ exports.createUser = async (req, res) => {
 
     res.status(201).json(newUser);
     
-  } catch (err) {
-    console.error("Error creating user:", error);
-    res.status(500).json({ message: "Internal server error" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -58,22 +57,6 @@ exports.readUser = async (req, res) => {
   }
 };
 
-exports.updateUser = async (req, res) => {
-  const { email, password, permission } = req.body;
-  const updatedUser = await database.User.update(
-    {
-      ...(email && { email }),
-      ...(password && { password }),
-      ...(permission && { permission }),
-    },
-    { where: { id } }
-  );
-  res.send("Dados de usuário atualizados");
-};
+exports.updateUser = async (req, res) => {};
 
-exports.deleteUser = (req, res) => {
-  const deletedUser = database.User.destroy({
-    where: { id: req.params.id },
-  });
-  res.send("Usuário deletado com sucesso");
-};
+exports.deleteUser = (req, res) => {};
