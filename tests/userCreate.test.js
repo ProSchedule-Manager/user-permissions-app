@@ -89,14 +89,14 @@ describe("user controller", () => {
 
     it("handles database error", async () => {
       jest.spyOn(database.User, "findOne").mockImplementation(() => {
-        throw new Error();
+        throw new Error("Error creating a user. Please try again.");
       });
 
       await createUser(req, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Error creating a user. Please try again",
+        message: "Error creating a user. Please try again.",
       });
     });
   });
