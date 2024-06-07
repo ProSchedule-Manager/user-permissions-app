@@ -160,7 +160,6 @@ describe("user controller", () => {
           status: jest.fn().mockReturnThis(),
           send: jest.fn()
         };
-        database.User.update = jest.fn().mockResolvedValue(new Error("Database error"));
         await updateUser(req, res);
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.send).toHaveBeenCalledWith("An error occurred while updating user data");
