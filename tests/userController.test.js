@@ -1,4 +1,4 @@
-const { createUser } = require("../controllers/userControllers");
+const { createUser, updateUser } = require("../controllers/userControllers");
 const database = require("../models/User");
 
 jest.mock("../models/User");
@@ -102,8 +102,40 @@ describe("user controller", () => {
   });
 
   describe("updates a user", () => {
-      it("updates an user if the user alreadys exists");
-      it("fails to update an inexisting user");
+      it("updates an existent user", async() => {
+        const req = {
+          body: { id: 1, email: "newemail@example.com" }
+        };
+        const res = {
+          status: jest.fn().mockReturnThis(),
+          send: jest.fn()
+        };
+    
+        database.User.update = jest.fn().mockResolvedValue([1]);
+    
+        await updateUser(req, res);
+    
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.send).toHaveBeenCalledWith("User data updated");
+      });
+      it("handles a request to update non existent user", async() => {
+          const req = {
+            body: { id: 99, email: "newemail@example.com" }
+          };
+          const res = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn()
+          };
+          
+          // O primeiro elemento da função updated do sequeleize é o número de linhas afetadas por essa atualização
+          // Se o valor de n em mockResolverValue([n]) for diferente de 0, não estaremos buscando por alterações
+          database.User.update = jest.fn().mockResolvedValue([0]);
+      
+          await updateUser(req, res);
+      
+          expect(res.status).toHaveBeenCalledWith(404);
+          expect(res.send).toHaveBeenCalledWith("User not found");
+      });
       it("tries to update an user with missing fields requirements");
       it("handles database error");
   });

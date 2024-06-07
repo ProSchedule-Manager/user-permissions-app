@@ -60,7 +60,7 @@ exports.readUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   const { id, email, password, permission } = req.body;
   try {
-    const updatedUser = await database.User.update(
+    const [updatedUser] = await database.User.update(
       {
         ...(email && { email }),
         ...(password && { password }),
