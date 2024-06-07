@@ -104,7 +104,7 @@ describe("user controller", () => {
   describe("updates a user", () => {
       it("updates an existent user", async() => {
         const req = {
-          body: { id: 1, email: "newemail@example.com" }
+          body: { id: 1, email: "newemail@example.com", password: "newpassword", permission: "newpermission" }
         };
         const res = {
           status: jest.fn().mockReturnThis(),
@@ -120,7 +120,7 @@ describe("user controller", () => {
       });
       it("handles a request to update non existent user", async() => {
           const req = {
-            body: { id: 99, email: "newemail@example.com" }
+            body: { id: 99, email: "newemail@example.com", password: "newpassword", permission: "newpermission" }
           };
           const res = {
             status: jest.fn().mockReturnThis(),
@@ -136,8 +136,35 @@ describe("user controller", () => {
           expect(res.status).toHaveBeenCalledWith(404);
           expect(res.send).toHaveBeenCalledWith("User not found");
       });
-      it("tries to update an user with missing fields requirements");
-      it("handles database error");
+      it("handles partial updates", async() => {
+        const req = {
+          body: { id: 69, email: "newemail@example.com" }
+        };
+        const res = {
+          status: jest.fn().mockReturnThis(),
+          send: jest.fn()
+        };
+
+        database.User.update = jest.fn().mockResolvedValue([69]);
+
+        await updateUser(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.send).toHaveBeenCalledWith("User data updated");
+      });
+      it("handles database error", async() => {
+        const req = {
+          body: { id: 1, email: "newemail@example.com" }
+        };
+        const res = {
+          status: jest.fn().mockReturnThis(),
+          send: jest.fn()
+        };
+        database.User.update = jest.fn().mockResolvedValue(new Error("Database error"));
+        await updateUser(req, res);
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.send).toHaveBeenCalledWith("An error occurred while updating user data");
+      });
   });
 
-});
+})
