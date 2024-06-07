@@ -127,8 +127,7 @@ describe("user controller", () => {
             send: jest.fn()
           };
           
-          // O primeiro elemento da função updated do sequeleize é o número de linhas afetadas por essa atualização
-          // Se o valor de n em mockResolverValue([n]) for diferente de 0, não estaremos buscando por alterações
+          // The first element is the number of rows affected by the update operation. This is the value that shows if any records have been updated.
           database.User.update = jest.fn().mockResolvedValue([0]);
       
           await updateUser(req, res);
