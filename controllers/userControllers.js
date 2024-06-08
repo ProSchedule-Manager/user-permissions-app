@@ -39,7 +39,7 @@ exports.createUser = async (req, res) => {
   }
 };
 
-exports.readUser = async (req, res) => {
+exports.getUser = async (req, res) => {
   try {
     console.log("user id", req.params.id);
 

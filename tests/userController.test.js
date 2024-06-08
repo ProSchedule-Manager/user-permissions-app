@@ -1,4 +1,4 @@
-const { createUser } = require("../controllers/userControllers");
+const { createUser, getUser } = require("../controllers/userControllers");
 const database = require("../models/User");
 
 jest.mock("../models/User");
@@ -100,4 +100,24 @@ describe("user controller", () => {
       });
     });
   });
+
+  describe("gets a user", () => {
+    it("gets an existing user", async() => {
+      const req = {
+        params: { id: 1}
+      };
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      };
+
+      const user = { id: 1, email: "random@example.com", password: "giants", permission: "tenant"};
+      database.User.findOne = jest.fn().mockResolvedValue(user);
+
+      await getUser(req, res);
+
+      expect(res.status).not.toHaveBeenCalledWith();
+      expect(res.json).toHaveBeenCalledWith(user);
+    })
+  })
 });
