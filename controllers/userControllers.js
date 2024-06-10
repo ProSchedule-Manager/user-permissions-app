@@ -39,7 +39,7 @@ exports.createUser = async (req, res) => {
   }
 };
 
-exports.readUser = async (req, res) => {
+exports.getUser = async (req, res) => {
   try {
     console.log("user id", req.params.id);
 
@@ -48,12 +48,12 @@ exports.readUser = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "Error trying to delete the user, user not found" });
     }
 
     res.json(user);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Error, please try again" });
   }
 };
 

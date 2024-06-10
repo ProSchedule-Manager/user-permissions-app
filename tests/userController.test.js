@@ -1,4 +1,4 @@
-const { createUser } = require("../controllers/userControllers");
+const { createUser, getUser } = require("../controllers/userControllers");
 const database = require("../models/User");
 
 jest.mock("../models/User");
@@ -14,6 +14,7 @@ describe("user controller", () => {
     res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn().mockReturnThis(),
+      send: jest.fn(),
     };
   });
 
@@ -100,4 +101,43 @@ describe("user controller", () => {
       });
     });
   });
+
+  describe("gets a user", () => {
+    it("gets an existing user", async() => {
+      const req = {
+        params: { id: 1}
+      };
+
+      const user = { id: 1, email: "random@example.com", password: "giants", permission: "tenant"};
+      database.User.findOne = jest.fn().mockResolvedValue(user);
+
+      await getUser(req, res);
+
+      expect(res.status).not.toHaveBeenCalledWith();
+      expect(res.json).toHaveBeenCalledWith(user);
+    });
+    it("handles a request for non-existent user", async() => {
+      const req = {
+        params: { id: 99 }
+      };
+
+      database.User.findOne = jest.fn().mockResolvedValue(null);
+      
+      await getUser(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ message: "Error trying to delete the user, user not found"});
+    });
+    it("handles database error", async() => {
+      const req = {
+        params: { id: 1 }
+      };
+
+      database.User.findOne = jest.fn().mockRejectedValue();
+      await getUser(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ message: "Error, please try again" });
+    })
+  })
 });
