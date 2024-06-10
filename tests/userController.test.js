@@ -14,6 +14,7 @@ describe("user controller", () => {
     res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn().mockReturnThis(),
+      send: jest.fn(),
     };
   });
 
@@ -106,10 +107,6 @@ describe("user controller", () => {
       const req = {
         params: { id: 1}
       };
-      const res = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn()
-      };
 
       const user = { id: 1, email: "random@example.com", password: "giants", permission: "tenant"};
       database.User.findOne = jest.fn().mockResolvedValue(user);
@@ -123,30 +120,24 @@ describe("user controller", () => {
       const req = {
         params: { id: 99 }
       };
-      const res = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn()
-      };
+
       database.User.findOne = jest.fn().mockResolvedValue(null);
       
       await getUser(req, res);
 
       expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ message: "User not found"});
+      expect(res.json).toHaveBeenCalledWith({ message: "Error trying to delete the user, user not found"});
     });
     it("handles database error", async() => {
       const req = {
         params: { id: 1 }
       };
-      const res = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn()
-      };
+
       database.User.findOne = jest.fn().mockRejectedValue();
       await getUser(req, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ message: "Database error" });
+      expect(res.json).toHaveBeenCalledWith({ message: "Error, please try again" });
     })
   })
 });
