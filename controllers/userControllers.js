@@ -61,7 +61,6 @@ exports.updateUser = async (req, res) => {};
 
 exports.deleteUser = async (req, res) => {
   try {
-    console.log("deletes an user", req.params.id);
 
     const result = await database.User.destroy({
       where: { id: req.params.id },
