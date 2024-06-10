@@ -1,4 +1,4 @@
-const { createUser } = require("../controllers/userControllers");
+const { createUser, updateUser } = require("../controllers/userControllers");
 const database = require("../models/User");
 
 jest.mock("../models/User");
@@ -14,6 +14,7 @@ describe("user controller", () => {
     res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn().mockReturnThis(),
+      send: jest.fn(),
     };
   });
 
@@ -100,4 +101,54 @@ describe("user controller", () => {
       });
     });
   });
-});
+
+  describe("updates a user", () => {
+      it("updates an existent user", async() => {
+        const req = {
+          body: { id: 1, email: "newemail@example.com", password: "newpassword", permission: "newpermission" }
+        };
+    
+        database.User.update = jest.fn().mockResolvedValue([1]);
+    
+        await updateUser(req, res);
+    
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.send).toHaveBeenCalledWith("User data updated");
+      });
+      it("handles a request to update non existent user", async() => {
+          const req = {
+            body: { id: 99, email: "newemail@example.com", password: "newpassword", permission: "newpermission" }
+          };
+          
+         // Mock update to return 0 updated rows
+          database.User.update = jest.fn().mockResolvedValue([0]);
+      
+          await updateUser(req, res);
+      
+          expect(res.status).toHaveBeenCalledWith(404);
+          expect(res.send).toHaveBeenCalledWith("User not found");
+      });
+      it("handles partial updates", async() => {
+        const req = {
+          body: { id: 69, email: "newemail@example.com" }
+        };
+
+        database.User.update = jest.fn().mockResolvedValue([69]);
+
+        await updateUser(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.send).toHaveBeenCalledWith("User data updated");
+      });
+      it("handles database error", async() => {
+        const req = {
+          body: { id: 1, email: "newemail@example.com" }
+        };
+        
+        await updateUser(req, res);
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.send).toHaveBeenCalledWith("An error occurred while updating user data");
+      });
+  });
+
+})
