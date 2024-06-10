@@ -118,6 +118,35 @@ describe("user controller", () => {
 
       expect(res.status).not.toHaveBeenCalledWith();
       expect(res.json).toHaveBeenCalledWith(user);
+    });
+    it("handles a request for non-existent user", async() => {
+      const req = {
+        params: { id: 99 }
+      };
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      };
+      database.User.findOne = jest.fn().mockResolvedValue(null);
+      
+      await getUser(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ message: "User not found"});
+    });
+    it("handles database error", async() => {
+      const req = {
+        params: { id: 1 }
+      };
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      };
+      database.User.findOne = jest.fn().mockRejectedValue();
+      await getUser(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ message: "Database error" });
     })
   })
 });
