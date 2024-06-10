@@ -57,6 +57,21 @@ exports.readUser = async (req, res) => {
   }
 };
 
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await database.User.findAll();
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "No users found" });
+    }
+
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: "Database error" });
+  }
+};
+
+
 exports.updateUser = async (req, res) => {};
 
 exports.deleteUser = (req, res) => {};

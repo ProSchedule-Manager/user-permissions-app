@@ -1,4 +1,4 @@
-const { createUser } = require("../controllers/userControllers");
+const { createUser, getAllUsers } = require("../controllers/userControllers");
 const database = require("../models/User");
 
 jest.mock("../models/User");
@@ -98,6 +98,31 @@ describe("user controller", () => {
       expect(res.json).toHaveBeenCalledWith({
         message: "Error creating a user. Please try again.",
       });
+    });
+  });
+
+  describe("getAllUsers", () => {
+    it("handles request to get all users", async () => {
+      const mockUsers = [
+        { id: 1, name: "Rian", email: "rian@example.com" },
+        { id: 2, name: "Vinicus", email: "vsantana@example.com" },
+      ];
+
+      database.User.findAll.mockResolvedValue(mockUsers);
+
+      await getAllUsers(req, res);
+
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).toHaveBeenCalledWith(mockUsers);
+    });
+
+    it("handles request to get all users without having users", async () => {
+      database.User.findAll.mockResolvedValue([]);
+
+      await getAllUsers(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ message: "No users found" });
     });
   });
 });
