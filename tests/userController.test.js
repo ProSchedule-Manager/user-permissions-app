@@ -14,6 +14,7 @@ describe("user controller", () => {
     res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn().mockReturnThis(),
+      send: jest.fn(),
     };
   });
 
@@ -106,10 +107,6 @@ describe("user controller", () => {
         const req = {
           body: { id: 1, email: "newemail@example.com", password: "newpassword", permission: "newpermission" }
         };
-        const res = {
-          status: jest.fn().mockReturnThis(),
-          send: jest.fn()
-        };
     
         database.User.update = jest.fn().mockResolvedValue([1]);
     
@@ -122,12 +119,8 @@ describe("user controller", () => {
           const req = {
             body: { id: 99, email: "newemail@example.com", password: "newpassword", permission: "newpermission" }
           };
-          const res = {
-            status: jest.fn().mockReturnThis(),
-            send: jest.fn()
-          };
           
-          // The first element is the number of rows affected by the update operation. This is the value that shows if any records have been updated.
+         // Mock update to return 0 updated rows
           database.User.update = jest.fn().mockResolvedValue([0]);
       
           await updateUser(req, res);
@@ -138,10 +131,6 @@ describe("user controller", () => {
       it("handles partial updates", async() => {
         const req = {
           body: { id: 69, email: "newemail@example.com" }
-        };
-        const res = {
-          status: jest.fn().mockReturnThis(),
-          send: jest.fn()
         };
 
         database.User.update = jest.fn().mockResolvedValue([69]);
@@ -155,10 +144,7 @@ describe("user controller", () => {
         const req = {
           body: { id: 1, email: "newemail@example.com" }
         };
-        const res = {
-          status: jest.fn().mockReturnThis(),
-          send: jest.fn()
-        };
+        
         await updateUser(req, res);
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.send).toHaveBeenCalledWith("An error occurred while updating user data");
