@@ -14,6 +14,7 @@ describe("user controller", () => {
     res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn().mockReturnThis(),
+      send: jest.fn(),
     };
   });
 
@@ -106,10 +107,6 @@ describe("user controller", () => {
         const req = {
             params: { id: 1 }
         };
-        const res = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn()
-        };
 
         database.User.destroy = jest.fn().mockResolvedValue(1);
 
@@ -123,10 +120,6 @@ describe("user controller", () => {
         const req = {
             params: { id: 99 }
         };
-        const res = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn()
-        };
 
         database.User.destroy = jest.fn().mockResolvedValue(0);
 
@@ -139,10 +132,6 @@ describe("user controller", () => {
     it("handles database error", async () => {
         const req = {
             params: { id: 1 }
-        };
-        const res = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn()
         };
 
         database.User.destroy = jest.fn().mockRejectedValue();
